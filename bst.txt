@@ -1,0 +1,154 @@
+#include<stdio.h>
+#include<malloc.h>
+
+struct node{
+    int value;
+    struct node *leftvalue;
+    struct node *rightvalue;
+};
+
+struct node* find( struct node* main, int store){
+    struct node *current = main;
+    printf("going through elements: ");
+    while(current->value != store) {
+        if(current != NULL){
+            printf("%d",current->value);
+            if(current->value > store) {
+                current = current->leftvalue;
+            }
+            else current = current->rightvalue;
+        }
+        else return NULL;
+    }
+    return current;
+}
+
+void insert(struct node* main, int store) {
+   	struct node *newNode = (struct node*) malloc(sizeof(struct node));
+   	struct node *current;
+   	struct node *temp;
+   	newNode -> value = store;
+   	newNode -> leftvalue = NULL;
+   	newNode -> rightvalue = NULL;
+	
+   	if(main == NULL) {					
+    	main = newNode;
+   	}	 
+   	else {
+    	current = main;
+      	temp = NULL;
+	    while(1) {                
+        	temp = current;
+			if(store < temp->value) {				
+            	current = current->leftvalue;                
+            	if(current == NULL) {			
+               		temp->leftvalue = newNode;
+               		return; 
+           		}
+        	}
+        	else {									
+        		current = current->rightvalue;
+            	if(current == NULL) {					
+            		temp->rightvalue = newNode;
+               		return;
+          		}
+       	 	}
+    	}            
+   	}
+}     
+struct node* minValueNode(struct node* main){
+    struct node* current = main;
+    while( current && current->rightvalue != NULL)
+    current = current->rightvalue;
+    return current;
+    
+}
+struct node* deleteNode(struct node* main, int store){
+	if (main == NULL) 
+		return main; 
+	if (store < main->value) 
+        main->leftvalue = deleteNode(main->leftvalue, store); 
+  	else if (store > main->value) 
+        main->rightvalue = deleteNode(main->rightvalue, store); 
+    else { 
+    	if (main->leftvalue == NULL && main->rightvalue == NULL){		
+        	free(main);
+		    return NULL;
+        }
+        else if (main->leftvalue == NULL) { 							
+            struct node *temp = main->rightvalue; 
+            free(main); 
+            return temp; 
+        } 
+        else if (main->rightvalue == NULL) { 							
+            struct node *temp = main->leftvalue; 
+            free(main); 
+            return temp; 
+        } 
+  	    struct node* temp = minValueNode(main->rightvalue); 
+        main->value = temp->value;	 
+	    main->rightvalue = deleteNode(main->rightvalue, temp->value); 	
+    } 
+    return main; 
+}
+
+void inOrder(struct node* main) {
+    if (main == NULL) {								
+        return;
+    }    
+    inOrder(main -> leftvalue);						    
+    printf("%d ", main -> value);					    
+    inOrder(main -> rightvalue);					
+}
+
+void preOrder(struct node* main) {
+    if (main == NULL) {								
+        return;
+    } printf("%d ", main -> value);   
+    preOrder(main -> leftvalue);						    
+    preOrder(main -> rightvalue);					
+}
+void postOrder(struct node* main) {
+    if (main == NULL) {								
+        return;
+    }    
+    postOrder(main -> leftvalue);						    
+    postOrder(main -> rightvalue);	
+    printf("%d ", main -> value);
+}
+int main(){
+	struct node* n1 = (struct node*)malloc(sizeof(struct node));
+	struct node* n2 = (struct node*)malloc(sizeof(struct node));
+	struct node* n3 = (struct node*)malloc(sizeof(struct node));
+	struct node* n4 = (struct node*)malloc(sizeof(struct node));
+	struct node* n5 = (struct node*)malloc(sizeof(struct node));
+	struct node* n6 = (struct node*)malloc(sizeof(struct node));
+	struct node* n7 = (struct node*)malloc(sizeof(struct node));
+	n1 -> value = 1; n1 -> leftvalue = n2; n1 -> rightvalue = n3; 
+	n2 -> value = 2; n2 -> leftvalue = NULL; n2 -> rightvalue = n4; 
+	n3 -> value = 3; n3 -> leftvalue = n5; n3 -> rightvalue = NULL; 
+	n4 -> value = 4; n4 -> leftvalue = n6; n4 -> rightvalue = NULL;
+	n5 -> value = 5; n5 -> leftvalue = NULL; n5 -> rightvalue = n7; 
+	n6 -> value = 6; n6 -> leftvalue = NULL; n6 -> rightvalue= NULL; 
+	n7 -> value = 7; n7 -> leftvalue = NULL; n7 -> rightvalue= NULL; 
+	struct node *main = n1;
+	printf("\n");
+	inOrder(main);
+	insert(main, 8);
+	printf("\n----\n");
+	inOrder(main);
+	insert(main, 9);
+	printf("\n----\n");
+	inOrder(main);
+	printf("\n----\n");
+	printf("\n\tpreorder\n");
+	preOrder(main);
+	printf("\n----\n");
+	printf("\n\tpostorder\n");
+	postOrder(main);
+	printf("\n----\n");
+	printf("\n\tafter deleting\n");
+	deleteNode(main, 8);
+	inOrder(main);
+	return 0;
+}

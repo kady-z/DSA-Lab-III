@@ -1,0 +1,65 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+#define VERTEX 6
+
+int mink(int key[], bool vstset[]);
+int print(int store[], int gdiag[VERTEX][VERTEX]);
+
+void operation(int gdiag[VERTEX][VERTEX])
+{
+
+	int store[VERTEX],key[VERTEX];
+	bool vstset[VERTEX];
+
+	for (int i = 0; i < VERTEX; i++)
+		key[i] = 10000, vstset[i] = false;
+
+	key[0] = 0;
+
+	for (int count = 0; count < VERTEX - 1; count++) {
+		int min2 = mink(key, vstset);
+
+		vstset[min2] = true;
+
+	    for (int i = 0; i < VERTEX; i++)
+
+			if (gdiag[min2][i] && vstset[i] == false && gdiag[min2][i] < key[i])
+				store[i] = min2, key[i] = gdiag[min2][i];
+	}
+
+	print(store, gdiag);
+}
+
+
+int main()
+{
+	int gdiag[VERTEX][VERTEX] = { { 0, 2, 0, 6, 0, 2 },
+						{ 2, 0, 3, 8, 5, 1 },
+						{ 0, 3, 0, 0, 7, 1 },
+						{ 6, 8, 0, 0, 9, 1 },
+						{ 0, 5, 7, 9, 0, 1 },
+						{ 2, 1, 1, 1, 1, 1}};
+	operation(gdiag);
+
+	return 0;
+}
+
+int mink(int key[], bool vstset[])
+{
+	int min = 10000, mindex;
+
+	for (int i = 0; i < VERTEX; i++)
+		if (vstset[i] == false && key[i] < min)
+			min = key[i], mindex = i;
+
+	return mindex;
+}
+
+int print(int store[], int gdiag[VERTEX][VERTEX])
+{
+	printf("Edge \tWeight\n");
+	for (int i = 1; i < VERTEX; i++)
+		printf("%d - %d \t%d \n", store[i], i, gdiag[i][store[i]]);
+		return 0;
+}
